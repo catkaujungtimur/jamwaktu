@@ -7,8 +7,8 @@
 <style>
 :root{--bg:#f3f5f4;--card:#fff;--ink:#17211d;--mute:#66736d;--line:#dbe2de;--acc:#0f766e;--dl:#0f766e;--ul:#b45309;--pg:#4f46e5}
 @media (prefers-color-scheme:dark){:root{--bg:#101614;--card:#18211e;--ink:#e8efec;--mute:#93a39b;--line:#2a3733;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc}}
-:root{--c1:#15803d;--c2:#0f766e;--c3:#b45309;--c4:#b91c1c}
-@media (prefers-color-scheme:dark){:root{--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171}}
+:root{--c1:#15803d;--c2:#0f766e;--c3:#b45309;--c4:#b91c1c;--kg:#15803d;--ky:#ca8a04;--ko:#ea580c}
+@media (prefers-color-scheme:dark){:root{--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15;--ko:#fb923c}}
 .pc{font-weight:600}
 details.card>summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;gap:8px;padding:2px 0}
 details.card>summary::-webkit-details-marker{display:none}
@@ -34,11 +34,12 @@ header{text-align:center;min-height:100vh;min-height:100svh;margin-top:-20px;mar
 #dateTxt{display:block}
 #ka{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:.15em .9em;margin-top:.7em;font-size:1.4rem;min-height:1.5em}
 #ka:empty{display:none}
-#ka .kn,#ka .kj{font-weight:600}
+#ka .kn,#ka .kj{font-weight:700}
 #ka .kj{color:var(--mute)}
-#ka .kc{font-size:1.4em;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em}
-#ka .kc.warn{color:var(--c3)}
-#ka .kc.urgent{color:var(--c4)}
+#ka .kc{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+#ka .kc.t60{color:var(--kg)}
+#ka .kc.t30{color:var(--ky)}
+#ka .kc.t5{color:var(--ko)}
 #ka.none{color:var(--mute);font-weight:400}
 .kaRow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .kaRow input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
@@ -58,7 +59,7 @@ html[data-clock="2"] #dateTxt{font-size:3vw}
 html[data-clock="3"] #dateTxt{font-size:3.8vw}
 html[data-clock="2"] #ka{font-size:3.4vw}
 html[data-clock="3"] #ka{font-size:4.4vw}
-html[data-bg="black"]{color-scheme:dark;--bg:#000;--card:#000;--ink:#f5f5f5;--mute:#9a9a9a;--line:#2b2b2b;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc;--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171}
+html[data-bg="black"]{color-scheme:dark;--bg:#000;--card:#000;--ink:#f5f5f5;--mute:#9a9a9a;--line:#2b2b2b;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc;--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15;--ko:#fb923c}
 html[data-bg="black"] button.on,html[data-bg="black"] button.main,html[data-bg="black"] .badge{color:#04211d}
 html[data-bg="black"] th{background:#000}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
@@ -251,7 +252,7 @@ function renderKa(d){
   if((best.t.no||'').trim())add('kn',best.t.no.trim());
   add('kj',best.t.jam);
   const df2=best.diff,c=add('kc',p2(Math.floor(df2/3600))+':'+p2(Math.floor(df2%3600/60))+':'+p2(df2%60));
-  if(df2<60)c.classList.add('urgent');else if(df2<300)c.classList.add('warn');
+  if(df2<300)c.classList.add('t5');else if(df2<1800)c.classList.add('t30');else if(df2<3600)c.classList.add('t60');
 }
 function updateKaBadge(){
   const n=trains.filter(t=>validJam(t.jam)).length,b=$('kaBadge');
