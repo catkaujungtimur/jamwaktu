@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pemantau Kecepatan Internet</title>
+<title>Jam Waktu</title>
 <style>
 :root{--bg:#f3f5f4;--card:#fff;--ink:#17211d;--mute:#66736d;--line:#dbe2de;--acc:#0f766e;--dl:#0f766e;--ul:#b45309;--pg:#4f46e5}
 @media (prefers-color-scheme:dark){:root{--bg:#101614;--card:#18211e;--ink:#e8efec;--mute:#93a39b;--line:#2a3733;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc}}
-:root{--c1:#15803d;--c2:#0f766e;--c3:#b45309;--c4:#b91c1c;--kg:#15803d;--ky:#ca8a04;--ko:#ea580c}
-@media (prefers-color-scheme:dark){:root{--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15;--ko:#fb923c}}
+:root{--c1:#15803d;--c2:#0f766e;--c3:#b45309;--c4:#b91c1c;--kg:#15803d;--ky:#ca8a04}
+@media (prefers-color-scheme:dark){:root{--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15}}
 .pc{font-weight:600}
 details.card>summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;gap:8px;padding:2px 0}
 details.card>summary::-webkit-details-marker{display:none}
@@ -39,13 +39,17 @@ header{text-align:center;min-height:100vh;min-height:100svh;margin-top:-20px;mar
 #ka .kc{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em}
 #ka .kc.t60{color:var(--kg)}
 #ka .kc.t30{color:var(--ky)}
-#ka .kc.t5{color:var(--ko)}
+#ka .kc.t10{color:var(--c4)}
 #ka.none{color:var(--mute);font-weight:400}
-.kaRow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.kaRow{display:flex;gap:8px;align-items:center}
+.kaSep{display:flex;align-items:center;gap:10px;margin:10px 0}
+.kaSep::before{content:"";flex:1;height:1px;background:var(--line)}
+.kaSep button{padding:4px 10px;font-size:.85rem}
+.kaRow input.bad{border-color:var(--c4)}
 .kaRow input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 .kaRow input:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 .kaRow .kNo{flex:1 1 140px}
-.kaRow .kJam{flex:0 0 120px}
+.kaRow .kJam{flex:0 0 96px;text-align:center;font-variant-numeric:tabular-nums}
 .kaRow .kDel{padding:6px 12px}
 .view{justify-content:center;margin-top:14px;gap:6px 18px}
 .view .grp{display:flex;align-items:center;gap:6px}
@@ -59,7 +63,7 @@ html[data-clock="2"] #dateTxt{font-size:3vw}
 html[data-clock="3"] #dateTxt{font-size:3.8vw}
 html[data-clock="2"] #ka{font-size:3.4vw}
 html[data-clock="3"] #ka{font-size:4.4vw}
-html[data-bg="black"]{color-scheme:dark;--bg:#000;--card:#000;--ink:#f5f5f5;--mute:#9a9a9a;--line:#2b2b2b;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc;--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15;--ko:#fb923c}
+html[data-bg="black"]{color-scheme:dark;--bg:#000;--card:#000;--ink:#f5f5f5;--mute:#9a9a9a;--line:#2b2b2b;--acc:#2dd4bf;--dl:#2dd4bf;--ul:#fbbf24;--pg:#a5b4fc;--c1:#4ade80;--c2:#2dd4bf;--c3:#fbbf24;--c4:#f87171;--kg:#4ade80;--ky:#facc15}
 html[data-bg="black"] button.on,html[data-bg="black"] button.main,html[data-bg="black"] .badge{color:#04211d}
 html[data-bg="black"] th{background:#000}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
@@ -116,10 +120,13 @@ th{position:sticky;top:0;background:var(--card);color:var(--mute);font-weight:60
   <summary>Jadwal KA <span id="kaBadge"></span></summary>
   <div id="kaRows"></div>
   <div class="row" style="margin-top:6px">
-    <button id="kaAdd">Tambah KA</button>
     <button id="kaClear">Kosongkan semua</button>
+    <button id="kaSave">Simpan JSON</button>
+    <button id="kaLoad">Muat JSON</button>
+    <input type="file" id="kaFile" accept=".json,application/json" hidden>
   </div>
-  <div style="color:var(--mute);font-size:.85rem;margin-top:10px">Isi nomor KA dan jam (format 24 jam, WIB). Di bawah jam utama tampil KA berikutnya yang jamnya paling dekat, lengkap dengan hitungan mundur. Baris tanpa jam diabaikan. Jadwal tersimpan di browser ini dan berlaku setiap hari sampai kamu ubah.</div>
+  <div id="kaMsg" style="color:var(--mute);font-size:.85rem;margin-top:8px" aria-live="polite"></div>
+  <div style="color:var(--mute);font-size:.85rem;margin-top:10px">Isi nomor KA dan jam dengan format 24 jam, misalnya 16:45 (ketik 1645 juga bisa). Tombol Tambah KA di garis pemisah menyisipkan baris baru di bawah KA di atasnya. Di bawah jam utama tampil KA berikutnya yang jamnya paling dekat, lengkap dengan hitungan mundur. Baris tanpa jam diabaikan. Jadwal tersimpan di browser ini dan berlaku setiap hari sampai kamu ubah.</div>
 </details>
 
 <section class="card">
@@ -231,7 +238,13 @@ let trains=load(KKEY,[]);
 if(!Array.isArray(trains)||!trains.length)trains=[{no:'',jam:''}];
 const nf=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hourCycle:'h23',hour:'numeric',minute:'numeric',second:'numeric'});
 const p2=n=>String(n).padStart(2,'0');
-const validJam=j=>/^\d{2}:\d{2}$/.test(j||'');
+function parseJam(v){
+  const m=/^\s*(\d{1,2})\s*:?\s*(\d{2})\s*$/.exec(v||'');
+  if(!m)return '';
+  const h=+m[1],mi=+m[2];
+  return h<24&&mi<60?p2(h)+':'+p2(mi):'';
+}
+const validJam=j=>parseJam(j)===j&&j!=='';
 function nowSec(d){const o={};nf.formatToParts(d).forEach(p=>{o[p.type]=+p.value});return o.hour*3600+o.minute*60+o.second}
 function renderKa(d){
   const el=$('ka'),now=nowSec(d);
@@ -252,30 +265,73 @@ function renderKa(d){
   if((best.t.no||'').trim())add('kn',best.t.no.trim());
   add('kj',best.t.jam);
   const df2=best.diff,c=add('kc',p2(Math.floor(df2/3600))+':'+p2(Math.floor(df2%3600/60))+':'+p2(df2%60));
-  if(df2<300)c.classList.add('t5');else if(df2<1800)c.classList.add('t30');else if(df2<3600)c.classList.add('t60');
+  if(df2<600)c.classList.add('t10');else if(df2<1800)c.classList.add('t30');else if(df2<3600)c.classList.add('t60');
 }
 function updateKaBadge(){
   const n=trains.filter(t=>validJam(t.jam)).length,b=$('kaBadge');
   if(n){b.className='badge';b.textContent=n+' KA'}else{b.className='';b.textContent=''}
 }
-function renderKaRows(){
+function renderKaRows(focusIdx){
   const box=$('kaRows');box.textContent='';
   trains.forEach((t,i)=>{
     const r=document.createElement('div');r.className='kaRow';
     const no=document.createElement('input');no.type='text';no.className='kNo';no.placeholder='Nomor KA';no.value=t.no||'';no.setAttribute('aria-label','Nomor KA '+(i+1));no.maxLength=40;
-    const jm=document.createElement('input');jm.type='time';jm.className='kJam';jm.value=t.jam||'';jm.setAttribute('aria-label','Jam KA '+(i+1));
+    const jm=document.createElement('input');jm.type='text';jm.className='kJam';jm.placeholder='JJ:MM';jm.value=t.jam||'';jm.maxLength=5;jm.inputMode='numeric';jm.autocomplete='off';jm.setAttribute('aria-label','Jam KA '+(i+1)+' (24 jam)');
     const del=document.createElement('button');del.className='kDel';del.textContent='Hapus';del.setAttribute('aria-label','Hapus KA '+(i+1));
-    const upd=()=>{t.no=no.value;t.jam=jm.value;save(KKEY,trains);updateKaBadge();renderKa(new Date())};
-    no.oninput=upd;jm.oninput=upd;jm.onchange=upd;
-    del.onclick=()=>{trains.splice(i,1);if(!trains.length)trains.push({no:'',jam:''});save(KKEY,trains);renderKaRows();updateKaBadge();renderKa(new Date())};
+    const upd=()=>{
+      t.no=no.value;
+      const j=parseJam(jm.value);
+      t.jam=j;
+      jm.classList.toggle('bad',jm.value.trim()!==''&&!j&&/^\d{1,2}:?\d{2}$/.test(jm.value.trim()));
+      save(KKEY,trains);updateKaBadge();renderKa(new Date());
+    };
+    no.oninput=upd;
+    jm.oninput=e=>{
+      if(e.inputType&&e.inputType.startsWith('insert')&&/^\d{2}$/.test(jm.value))jm.value+=':';
+      upd();
+    };
+    jm.onblur=()=>{const j=parseJam(jm.value);if(j)jm.value=j;upd()};
+    del.onclick=()=>{trains.splice(i,1);if(!trains.length)trains.push({no:'',jam:''});save(KKEY,trains);renderKaRows();renderKa(new Date())};
     r.append(no,jm,del);box.appendChild(r);
+    const sep=document.createElement('div');sep.className='kaSep';
+    const add=document.createElement('button');add.textContent='Tambah KA';add.setAttribute('aria-label','Tambah KA di bawah KA '+(i+1));
+    add.onclick=()=>{trains.splice(i+1,0,{no:'',jam:''});save(KKEY,trains);renderKaRows(i+1)};
+    sep.appendChild(add);box.appendChild(sep);
   });
   updateKaBadge();
+  if(focusIdx!=null){const x=box.querySelectorAll('.kNo');if(x[focusIdx])x[focusIdx].focus()}
 }
-$('kaAdd').onclick=()=>{trains.push({no:'',jam:''});save(KKEY,trains);renderKaRows();const x=document.querySelectorAll('#kaRows .kNo');x[x.length-1].focus()};
 $('kaClear').onclick=()=>{
   if(trains.some(t=>t.no||t.jam)&&!confirm('Kosongkan semua jadwal KA?'))return;
   trains=[{no:'',jam:''}];save(KKEY,trains);renderKaRows();renderKa(new Date());
+};
+function kaMsg(t){$('kaMsg').textContent=t}
+$('kaSave').onclick=()=>{
+  const list=trains.filter(t=>(t.no||'').trim()||t.jam).map(t=>({no:(t.no||'').trim(),jam:t.jam||''}));
+  if(!list.length){kaMsg('Belum ada jadwal untuk disimpan.');return}
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({versi:1,kereta:list},null,2)],{type:'application/json'}));
+  a.download='jadwal-ka.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  kaMsg('Tersimpan: jadwal-ka.json ('+list.length+' KA).');
+};
+$('kaLoad').onclick=()=>{$('kaFile').value='';$('kaFile').click()};
+$('kaFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const d=JSON.parse(rd.result);
+      const src=Array.isArray(d)?d:d.kereta;
+      if(!Array.isArray(src))throw new Error('format');
+      const list=src.filter(x=>x&&typeof x==='object').map(x=>({no:String(x.no==null?'':x.no).slice(0,40),jam:parseJam(String(x.jam==null?'':x.jam))}));
+      if(!list.length)throw new Error('kosong');
+      if(trains.some(t=>t.no||t.jam)&&!confirm('Ganti jadwal KA yang ada sekarang dengan isi file ini?'))return;
+      trains=list;save(KKEY,trains);renderKaRows();renderKa(new Date());
+      kaMsg('Dimuat: '+list.length+' KA dari '+f.name+'.');
+    }catch(err){kaMsg('File tidak bisa dibaca. Pastikan itu file jadwal-ka.json yang disimpan dari halaman ini.')}
+  };
+  rd.readAsText(f);
 };
 
 /* ---------- Pengukuran ---------- */
