@@ -46,6 +46,10 @@ header{text-align:center;min-height:100vh;min-height:100svh;margin-top:-20px;mar
 .kaSep::before{content:"";flex:1;height:1px;background:var(--line)}
 .kaSep button{padding:4px 10px;font-size:.85rem}
 .kaRow input.bad{border-color:var(--c4)}
+details.group>summary{font-size:1.15rem}
+.group .inner .card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:14px 0;margin:0}
+.group .inner>.card:first-child{border-top:0;padding-top:0}
+.group .inner>.card:last-child{padding-bottom:0}
 .kaRow input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 .kaRow input:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 .kaRow .kNo{flex:1 1 140px}
@@ -103,6 +107,10 @@ th{position:sticky;top:0;background:var(--card);color:var(--mute);font-weight:60
   <div id="ka" aria-live="off"></div>
 </header>
 
+<details class="card group" id="gJam">
+<summary>Jam waktu</summary>
+<div class="inner">
+
 <section class="card">
   <h2>Tampilan jam</h2>
   <div class="row view" style="margin-top:0;justify-content:flex-start">
@@ -128,6 +136,13 @@ th{position:sticky;top:0;background:var(--card);color:var(--mute);font-weight:60
   <div id="kaMsg" style="color:var(--mute);font-size:.85rem;margin-top:8px" aria-live="polite"></div>
   <div style="color:var(--mute);font-size:.85rem;margin-top:10px">Isi nomor KA dan jam dengan format 24 jam, misalnya 16:45 (ketik 1645 juga bisa). Tombol Tambah KA di garis pemisah menyisipkan baris baru di bawah KA di atasnya. Di bawah jam utama tampil KA berikutnya yang jamnya paling dekat, lengkap dengan hitungan mundur. Baris tanpa jam diabaikan. Jadwal tersimpan di browser ini dan berlaku setiap hari sampai kamu ubah.</div>
 </details>
+
+</div>
+</details>
+
+<details class="card group" id="gTes">
+<summary>Tes koneksi <span id="tesBadge"></span></summary>
+<div class="inner">
 
 <section class="card">
   <h2>Hasil tes terakhir</h2>
@@ -205,6 +220,8 @@ th{position:sticky;top:0;background:var(--card);color:var(--mute);font-weight:60
     <li>Riwayat hanya tersimpan di browser perangkat ini. Jika data situs dihapus, riwayat hilang, jadi ekspor CSV secara berkala.</li>
     <li>Hasil tes bisa terpengaruh jika ada orang lain sedang mengunduh besar di jaringan yang sama saat tes berjalan.</li>
   </ul>
+</details>
+</div>
 </details>
 </main>
 
@@ -448,6 +465,8 @@ function applySettings(){
   const bd=$('autoBadge');
   if(settings.auto){bd.className='badge';bd.textContent='Aktif · '+(settings.interval===60?'1 jam':settings.interval+' menit')}
   else{bd.className='';bd.textContent=''}
+  const tb=$('tesBadge');
+  if(settings.auto){tb.className='badge';tb.textContent='Otomatis aktif'}else{tb.className='';tb.textContent=''}
   save(SKEY,settings);
 }
 INTERVALS.forEach(m=>{
@@ -528,6 +547,7 @@ function drawChart(){
 }
 window.addEventListener('resize',drawChart);
 $('dChart').addEventListener('toggle',()=>{if($('dChart').open)drawChart()});
+$('gTes').addEventListener('toggle',()=>{if($('gTes').open&&$('dChart').open)drawChart()});
 
 /* ---------- Ekspor / hapus ---------- */
 $('btnCsv').onclick=()=>{
