@@ -268,8 +268,9 @@ function renderKa(d){
   const up=[];
   trains.forEach(t=>{
     if(!validJam(t.jam))return;
-    const diff=(+t.jam.slice(0,2))*3600+(+t.jam.slice(3,5))*60-now;
-    if(diff>=0)up.push({diff,t});
+    // Tanpa batas hari: KA yang jamnya sudah lewat dihitung sebagai KA besok pada jam yang sama.
+    const diff=((((+t.jam.slice(0,2))*3600+(+t.jam.slice(3,5))*60-now)%86400)+86400)%86400;
+    up.push({diff,t});
   });
   up.sort((x,y)=>x.diff-y.diff);
   // Semua KA yang sudah masuk 1 jam ditampilkan; jika belum ada, hanya KA terdekat.
