@@ -46,6 +46,10 @@ header{text-align:center;min-height:100vh;min-height:100svh;margin-top:-20px;mar
 .kaSep::before{content:"";flex:1;height:1px;background:var(--line)}
 .kaSep button{padding:4px 10px;font-size:.85rem}
 .kaRow input.bad{border-color:var(--c4)}
+.home{position:absolute;top:12px;left:12px;z-index:5;display:inline-flex;align-items:center;gap:6px;font-size:.85rem;line-height:1;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--mute);text-decoration:none}
+.home:hover{border-color:var(--acc);color:var(--ink)}
+.home:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.home svg{width:15px;height:15px;flex:none}
 details.group>summary{font-size:1.15rem}
 .group .inner .card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:14px 0;margin:0}
 .group .inner>.card:first-child{border-top:0;padding-top:0}
@@ -100,6 +104,7 @@ th{position:sticky;top:0;background:var(--card);color:var(--mute);font-weight:60
 </style>
 </head>
 <body>
+<a class="home" href="https://catkaujungtimur.github.io/home/" aria-label="Kembali ke Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>Home</a>
 <main>
 <header>
   <div id="clock">--:--:--</div>
@@ -596,6 +601,5 @@ applyView();applySettings();render();renderKaRows();tick();setInterval(tick,1000
 if(settings.auto){setWake(true);scheduleNext()}
 })();
 </script>
-<script src="https://catkaujungtimur.github.io/home/home-button.js"></script>
 </body>
 </html>
